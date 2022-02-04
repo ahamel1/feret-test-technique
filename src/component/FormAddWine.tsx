@@ -10,9 +10,7 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-
-const array = [{ value: "test", label: "test" }];
+import React, { useState } from "react";
 
 // retour d'API
 const GET_ALL_COMBINATIONS = [
@@ -74,6 +72,9 @@ interface CombinationsProps {
 }
 
 const FormAddWine = () => {
+  const [selectedName, setSelectedName] = useState<string | undefined>(
+    undefined
+  );
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     undefined
   );
@@ -83,26 +84,32 @@ const FormAddWine = () => {
   const [selectedSweetness, setSelectedSweetness] = useState<
     string | undefined
   >(undefined);
-  const [keys, setKeys] = useState<string[]>([]);
   const [selectedLabel, setSelectedLabel] = useState<string | undefined>(
     undefined
   );
-
-  // const combinationsMap = new Map();
+  const [selectedRange, setSelectedRange] = useState<string | undefined>(
+    undefined
+  );
 
   function combinationsByLabel(
     color?: string,
     type?: string,
     sweetness?: string
   ) {
-    return GET_ALL_COMBINATIONS.filter(
+    const filteredLabel = GET_ALL_COMBINATIONS.filter(
       (combination: CombinationsProps) =>
         (color === undefined || color === combination.color) &&
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-  }
 
+    const arr = filteredLabel.map((el) => {
+      return el.label;
+    });
+
+    return Array.from(new Set(arr));
+  }
+  console.log(combinationsByLabel().length);
   function combinationsByColor(
     label?: string,
     type?: string,
@@ -144,17 +151,26 @@ const FormAddWine = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit");
+    console.log("submit:", { label: selectedLabel });
   };
-  console.log(
-    combinationsByColor(selectedLabel, selectedType, selectedSweetness).map
-  );
+
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField color="primary" required label="Nom du vin" fullWidth />
+            <TextField
+              color="primary"
+              required
+              label="Nom du vin"
+              inputProps={{
+                maxLength: 25,
+              }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setSelectedName(e.target.value);
+              }}
+              fullWidth
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -173,11 +189,10 @@ const FormAddWine = () => {
                 selectedType,
                 selectedSweetness
               ).map((value, index) => {
-                console.log("label", value.label);
-                let key = `${value.label}-${index}`;
+                let key = `${value}-${index}`;
                 return (
-                  <MenuItem key={key} value={value.label}>
-                    {value.label}
+                  <MenuItem key={key} value={value}>
+                    {value}
                   </MenuItem>
                 );
               })}
@@ -272,6 +287,9 @@ const FormAddWine = () => {
                 row
                 aria-labelledby="radio-buttons-group-label"
                 name="radio-buttons-group"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSelectedRange(e.target.value);
+                }}
               >
                 <FormControlLabel
                   value="first-wine"
@@ -301,7 +319,17 @@ const FormAddWine = () => {
           >
             Après cette étape, vous ne pourrez plus modifier ces informations.
           </Box>
-          <Button type="submit" variant="contained">
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={
+              !selectedColor ||
+              !selectedLabel ||
+              !selectedType ||
+              !selectedSweetness ||
+              !selectedRange
+            }
+          >
             Suivant
           </Button>
         </Grid>
