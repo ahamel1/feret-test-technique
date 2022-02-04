@@ -67,70 +67,99 @@ const GET_ALL_COMBINATIONS = [
 ];
 
 interface CombinationsProps {
+  label: string;
   color: string;
   type: string;
   sweetness: string;
 }
 
 const FormAddWine = () => {
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [selectedSweetness, setSelectedSweetness] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedType, setSelectedType] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedSweetness, setSelectedSweetness] = useState<
+    string | undefined
+  >(undefined);
   const [keys, setKeys] = useState<string[]>([]);
   const [selectedLabel, setSelectedLabel] = useState<string | undefined>(
     undefined
   );
 
-  const combinationsMap = new Map();
+  // const combinationsMap = new Map();
 
-  GET_ALL_COMBINATIONS.forEach((combination) => {
-    if (combinationsMap.has(combination.label)) {
-      combinationsMap.get(combination.label).push({
-        color: [combination.color],
-        type: [combination.type],
-        sweetness: [combination.sweetness],
-      });
-    } else {
-      combinationsMap.set(combination.label, [
-        {
-          color: [combination.color],
-          type: [combination.type],
-          sweetness: [combination.sweetness],
-        },
-      ]);
-    }
-  });
+  function combinationsByLabel(
+    color?: string,
+    type?: string,
+    sweetness?: string
+  ) {
+    return GET_ALL_COMBINATIONS.filter(
+      (combination: CombinationsProps) =>
+        (color === undefined || color === combination.color) &&
+        (type === undefined || type === combination.type) &&
+        (sweetness === undefined || sweetness === combination.sweetness)
+    );
+  }
 
-  useEffect(() => {
-    let allKeys = Array.from(combinationsMap.keys());
-    setKeys(allKeys);
-  }, []);
+  function combinationsByColor(
+    label?: string,
+    type?: string,
+    sweetness?: string
+  ) {
+    return GET_ALL_COMBINATIONS.filter(
+      (combination: CombinationsProps) =>
+        (label === undefined || label === combination.label) &&
+        (type === undefined || type === combination.type) &&
+        (sweetness === undefined || sweetness === combination.sweetness)
+    );
+  }
 
-  console.log("keys", keys);
-  console.log("result", combinationsMap);
-  console.log("selectedLabel", selectedLabel);
+  function combinationsByType(
+    label?: string,
+    color?: string,
+    sweetness?: string
+  ) {
+    return GET_ALL_COMBINATIONS.filter(
+      (combination: CombinationsProps) =>
+        (label === undefined || label === combination.label) &&
+        (color === undefined || color === combination.color) &&
+        (sweetness === undefined || sweetness === combination.sweetness)
+    );
+  }
+
+  function combinationsBySweetness(
+    label?: string,
+    color?: string,
+    type?: string
+  ) {
+    return GET_ALL_COMBINATIONS.filter(
+      (combination: CombinationsProps) =>
+        (label === undefined || label === combination.label) &&
+        (color === undefined || color === combination.color) &&
+        (type === undefined || type === combination.type)
+    );
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submit");
   };
-
+  console.log(
+    combinationsByColor(selectedLabel, selectedType, selectedSweetness).map
+  );
   return (
     <>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
-              color="primary"
-              required
-              label="Nom du vin"
-              defaultValue="Super nom"
-              fullWidth
-            />
+            <TextField color="primary" required label="Nom du vin" fullWidth />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              id="outlined-select-color"
+              id="outlined-select-label"
               select
               label="Appélation"
               value={selectedLabel ? selectedLabel : ""}
@@ -139,11 +168,19 @@ const FormAddWine = () => {
               }}
               fullWidth
             >
-              {keys.map((key) => (
-                <MenuItem key={key} value={key}>
-                  {key}
-                </MenuItem>
-              ))}
+              {combinationsByLabel(
+                selectedColor,
+                selectedType,
+                selectedSweetness
+              ).map((value, index) => {
+                console.log("label", value.label);
+                let key = `${value.label}-${index}`;
+                return (
+                  <MenuItem key={key} value={value.label}>
+                    {value.label}
+                  </MenuItem>
+                );
+              })}
             </TextField>
           </Grid>
 
@@ -159,22 +196,21 @@ const FormAddWine = () => {
               }}
               fullWidth
             >
-              {selectedLabel ? (
-                combinationsMap
-                  .get(selectedLabel)
-                  .map((el: CombinationsProps) => (
-                    <MenuItem
-                      key={el.color.toString()}
-                      value={el.color.toString()}
-                    >
-                      {el.color.toString()}
-                    </MenuItem>
-                  ))
-              ) : (
-                <MenuItem value="Rouge">Rouge</MenuItem>
-              )}
+              {combinationsByColor(
+                selectedLabel,
+                selectedType,
+                selectedSweetness
+              ).map((value, index) => {
+                let key = `${value.color}-${index}`;
+                return (
+                  <MenuItem key={key} value={value.color}>
+                    {value.color}
+                  </MenuItem>
+                );
+              })}
             </TextField>
           </Grid>
+
           <Grid item xs={12} sm={4}>
             <TextField
               required
@@ -187,20 +223,18 @@ const FormAddWine = () => {
               }}
               fullWidth
             >
-              {selectedLabel ? (
-                combinationsMap
-                  .get(selectedLabel)
-                  .map((el: CombinationsProps) => (
-                    <MenuItem
-                      key={el.type.toString()}
-                      value={el.type.toString()}
-                    >
-                      {el.type.toString()}
-                    </MenuItem>
-                  ))
-              ) : (
-                <MenuItem />
-              )}
+              {combinationsByType(
+                selectedLabel,
+                selectedColor,
+                selectedSweetness
+              ).map((value, index) => {
+                let key = `${value.type}-${index}`;
+                return (
+                  <MenuItem key={key} value={value.type}>
+                    {value.type}
+                  </MenuItem>
+                );
+              })}
             </TextField>
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -215,20 +249,18 @@ const FormAddWine = () => {
               }}
               fullWidth
             >
-              {selectedLabel ? (
-                combinationsMap
-                  .get(selectedLabel)
-                  .map((el: CombinationsProps) => (
-                    <MenuItem
-                      key={el.sweetness.toString()}
-                      value={el.sweetness.toString()}
-                    >
-                      {el.sweetness.toString()}
-                    </MenuItem>
-                  ))
-              ) : (
-                <MenuItem />
-              )}
+              {combinationsBySweetness(
+                selectedLabel,
+                selectedColor,
+                selectedType
+              ).map((value, index) => {
+                let key = `${value.sweetness}-${index}`;
+                return (
+                  <MenuItem key={key} value={value.sweetness}>
+                    {value.sweetness}
+                  </MenuItem>
+                );
+              })}
             </TextField>
           </Grid>
           <Grid item xs={12} sx={{ marginBottom: "3rem" }}>
