@@ -120,8 +120,8 @@ const FormAddWine = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
+              color="primary"
               required
-              id="outlined-required"
               label="Nom du vin"
               defaultValue="Super nom"
               fullWidth
@@ -231,7 +231,7 @@ const FormAddWine = () => {
               )}
             </TextField>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ marginBottom: "3rem" }}>
             <FormControl>
               <FormLabel required id="radio-buttons-group-label">
                 Rang du vin
@@ -264,7 +264,9 @@ const FormAddWine = () => {
           item
           sx={{ display: "flex", flexDirection: "column", alignItems: "end" }}
         >
-          <Box sx={{ color: "primary.main", marginBottom: "1rem" }}>
+          <Box
+            sx={{ color: "primary.main", marginBottom: "1rem", zIndex: "1" }}
+          >
             Après cette étape, vous ne pourrez plus modifier ces informations.
           </Box>
           <Button type="submit" variant="contained">
