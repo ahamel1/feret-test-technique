@@ -1,3 +1,8 @@
-.MuiSelect-select, input {
+.MuiSelect-select, input, .MuiFormControlLabel-label {
   color: #432E35 !important
 }
+
+.MuiSelect-icon {
+  color: #D0BDC3 !important
+}
+

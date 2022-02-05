@@ -38,11 +38,15 @@ const useStyles = makeStyles((theme: Theme) => ({
       justifyContent: "center",
       alignItems: "end",
       zIndex: "2",
+      "@media (max-width:600px)": {
+        height: "1rem",
+      },
     },
   },
   cardContent: {
     marginBottom: "1rem",
     borderRadius: "10px",
+    padding: "1rem 2rem",
   },
   topLogo: {
     position: "absolute",
@@ -50,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     zIndex: "1",
     top: "-40px",
     textAlign: "center",
+    "@media (max-width:600px)": {
+      display: "none",
+    },
   },
   backgroundImg: {
     position: "absolute",
@@ -79,7 +86,7 @@ const ModalAddWine = (props: ModalAddWineProps) => {
       <div style={{ position: "relative" }}>
         <div className={styles.closeModal}>
           <IconButton onClick={props.close}>
-            <CloseIcon />
+            <CloseIcon sx={{ color: "secondary.main" }} />
           </IconButton>
         </div>
         <div className={styles.topLogo}>

@@ -9,8 +9,14 @@ import {
   RadioGroup,
   Button,
   Box,
+  Select,
+  SelectChangeEvent,
+  InputLabel,
+  OutlinedInput,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
+import ClearInput from "./ClearInput";
 
 // retour d'API
 const GET_ALL_COMBINATIONS = [
@@ -71,7 +77,13 @@ interface CombinationsProps {
   sweetness: string;
 }
 
+const useStyles = makeStyles(() => ({
+  input: {
+    marginTop: "0.25rem",
+  },
+}));
 const FormAddWine = () => {
+  const styles = useStyles();
   const [selectedName, setSelectedName] = useState<string | undefined>(
     undefined
   );
@@ -109,18 +121,23 @@ const FormAddWine = () => {
 
     return Array.from(new Set(arr));
   }
-  console.log(combinationsByLabel().length);
+
   function combinationsByColor(
     label?: string,
     type?: string,
     sweetness?: string
   ) {
-    return GET_ALL_COMBINATIONS.filter(
+    const filteredColor = GET_ALL_COMBINATIONS.filter(
       (combination: CombinationsProps) =>
         (label === undefined || label === combination.label) &&
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
+    const arr = filteredColor.map((el) => {
+      return el.color;
+    });
+
+    return Array.from(new Set(arr));
   }
 
   function combinationsByType(
@@ -128,12 +145,18 @@ const FormAddWine = () => {
     color?: string,
     sweetness?: string
   ) {
-    return GET_ALL_COMBINATIONS.filter(
+    const filteredType = GET_ALL_COMBINATIONS.filter(
       (combination: CombinationsProps) =>
         (label === undefined || label === combination.label) &&
         (color === undefined || color === combination.color) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
+    const arr = filteredType.map((el) => {
+      return el.type;
+    });
+    const arrayOfCombination = Array.from(new Set(arr));
+
+    return arrayOfCombination;
   }
 
   function combinationsBySweetness(
@@ -141,18 +164,32 @@ const FormAddWine = () => {
     color?: string,
     type?: string
   ) {
-    return GET_ALL_COMBINATIONS.filter(
+    const filteredSweetness = GET_ALL_COMBINATIONS.filter(
       (combination: CombinationsProps) =>
         (label === undefined || label === combination.label) &&
         (color === undefined || color === combination.color) &&
         (type === undefined || type === combination.type)
     );
+    const arr = filteredSweetness.map((el) => {
+      return el.sweetness;
+    });
+
+    return Array.from(new Set(arr));
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submit:", { label: selectedLabel });
+    console.log("submit:", {
+      label: selectedLabel,
+      color: selectedColor,
+      type: selectedType,
+      sweetness: selectedSweetness,
+      range: selectedRange,
+    });
   };
+
+  //Si mon tableau de combinaison est égal a un, alors je stocke cette valeur dans mon state.
+  // a CHAQUE FOIS que les combinaisons changent..
 
   return (
     <>
@@ -160,6 +197,7 @@ const FormAddWine = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
+              className={styles.input}
               color="primary"
               required
               label="Nom du vin"
@@ -172,111 +210,151 @@ const FormAddWine = () => {
               fullWidth
             />
           </Grid>
+
           <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              id="outlined-select-label"
-              select
-              label="Appélation"
-              value={selectedLabel ? selectedLabel : ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectedLabel(e.target.value);
-              }}
-              fullWidth
-            >
-              {combinationsByLabel(
-                selectedColor,
-                selectedType,
-                selectedSweetness
-              ).map((value, index) => {
-                let key = `${value}-${index}`;
-                return (
-                  <MenuItem key={key} value={value}>
-                    {value}
-                  </MenuItem>
-                );
-              })}
-            </TextField>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel shrink>Appélation</InputLabel>
+              <Select
+                input={<OutlinedInput notched label="Appélation" />}
+                displayEmpty
+                renderValue={() => selectedLabel}
+                className={styles.input}
+                required
+                id="outlined-select-label"
+                value={selectedLabel || ""}
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedLabel(e.target.value as string);
+                }}
+                endAdornment={
+                  selectedLabel ? (
+                    <ClearInput onClear={() => setSelectedLabel(undefined)} />
+                  ) : undefined
+                }
+              >
+                {combinationsByLabel(
+                  selectedColor,
+                  selectedType,
+                  selectedSweetness
+                ).map((value, index) => {
+                  let key = `${value}-${index}`;
+                  return (
+                    <MenuItem key={key} value={value}>
+                      {value}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              id="outlined-select-color"
-              select
-              label="Couleur"
-              value={selectedColor ? selectedColor : ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectedColor(e.target.value);
-              }}
-              fullWidth
-            >
-              {combinationsByColor(
-                selectedLabel,
-                selectedType,
-                selectedSweetness
-              ).map((value, index) => {
-                let key = `${value.color}-${index}`;
-                return (
-                  <MenuItem key={key} value={value.color}>
-                    {value.color}
-                  </MenuItem>
-                );
-              })}
-            </TextField>
+          <Grid item xs={12} sm={3}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel shrink>Couleur</InputLabel>
+              <Select
+                input={<OutlinedInput notched label="Couleur" />}
+                displayEmpty
+                renderValue={() => selectedColor}
+                color="primary"
+                className={styles.input}
+                required
+                id="outlined-select-color"
+                value={selectedColor || ""}
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedColor(e.target.value as string);
+                }}
+                endAdornment={
+                  selectedColor ? (
+                    <ClearInput onClear={() => setSelectedColor(undefined)} />
+                  ) : undefined
+                }
+              >
+                {combinationsByColor(
+                  selectedLabel,
+                  selectedType,
+                  selectedSweetness
+                ).map((value, index) => {
+                  let key = `${value}-${index}`;
+                  return (
+                    <MenuItem key={key} value={value}>
+                      {value}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              id="outlined-select-type"
-              select
-              label="Type"
-              value={selectedType ? selectedType : ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectedType(e.target.value);
-              }}
-              fullWidth
-            >
-              {combinationsByType(
-                selectedLabel,
-                selectedColor,
-                selectedSweetness
-              ).map((value, index) => {
-                let key = `${value.type}-${index}`;
-                return (
-                  <MenuItem key={key} value={value.type}>
-                    {value.type}
-                  </MenuItem>
-                );
-              })}
-            </TextField>
+          <Grid item xs={12} sm={3}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel shrink>Type</InputLabel>
+              <Select
+                input={<OutlinedInput notched label="Type" />}
+                displayEmpty
+                renderValue={() => selectedType}
+                className={styles.input}
+                required
+                id="outlined-select-type"
+                value={selectedType || ""}
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedType(e.target.value as string);
+                }}
+                endAdornment={
+                  selectedType ? (
+                    <ClearInput onClear={() => setSelectedType(undefined)} />
+                  ) : undefined
+                }
+              >
+                {combinationsByType(
+                  selectedLabel,
+                  selectedColor,
+                  selectedSweetness
+                ).map((value, index) => {
+                  let key = `${value}-${index}`;
+                  return (
+                    <MenuItem selected={true} key={key} value={value}>
+                      {value}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <TextField
-              required
-              id="outlined-select-sweetness"
-              select
-              label="Sucrosité"
-              value={selectedSweetness ? selectedSweetness : ""}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectedSweetness(e.target.value);
-              }}
-              fullWidth
-            >
-              {combinationsBySweetness(
-                selectedLabel,
-                selectedColor,
-                selectedType
-              ).map((value, index) => {
-                let key = `${value.sweetness}-${index}`;
-                return (
-                  <MenuItem key={key} value={value.sweetness}>
-                    {value.sweetness}
-                  </MenuItem>
-                );
-              })}
-            </TextField>
+          <Grid item xs={12} sm={3}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel shrink>Sucrosité</InputLabel>
+              <Select
+                input={<OutlinedInput notched label="Sucrosité" />}
+                displayEmpty
+                renderValue={() => selectedSweetness}
+                className={styles.input}
+                required
+                id="outlined-select-sweetness"
+                value={selectedSweetness || ""}
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedSweetness(e.target.value as string);
+                }}
+                endAdornment={
+                  selectedSweetness ? (
+                    <ClearInput
+                      onClear={() => setSelectedSweetness(undefined)}
+                    />
+                  ) : undefined
+                }
+              >
+                {combinationsBySweetness(
+                  selectedLabel,
+                  selectedColor,
+                  selectedType
+                ).map((value, index) => {
+                  let key = `${value}-${index}`;
+                  return (
+                    <MenuItem key={key} value={value}>
+                      {value}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} sx={{ marginBottom: "3rem" }}>
             <FormControl>
@@ -293,17 +371,44 @@ const FormAddWine = () => {
               >
                 <FormControlLabel
                   value="first-wine"
-                  control={<Radio color="secondary" />}
+                  control={
+                    <Radio
+                      sx={{
+                        color: "secondary.light",
+                        "&.Mui-checked": {
+                          color: "secondary.main",
+                        },
+                      }}
+                    />
+                  }
                   label="Premier vin"
                 />
                 <FormControlLabel
                   value="second-wine"
-                  control={<Radio color="secondary" />}
+                  control={
+                    <Radio
+                      sx={{
+                        color: "secondary.light",
+                        "&.Mui-checked": {
+                          color: "secondary.main",
+                        },
+                      }}
+                    />
+                  }
                   label="Second vin"
                 />
                 <FormControlLabel
                   value="other-wine"
-                  control={<Radio color="secondary" />}
+                  control={
+                    <Radio
+                      sx={{
+                        color: "secondary.light",
+                        "&.Mui-checked": {
+                          color: "secondary.main",
+                        },
+                      }}
+                    />
+                  }
                   label="Autre vin"
                 />
               </RadioGroup>
@@ -315,7 +420,12 @@ const FormAddWine = () => {
           sx={{ display: "flex", flexDirection: "column", alignItems: "end" }}
         >
           <Box
-            sx={{ color: "primary.main", marginBottom: "1rem", zIndex: "1" }}
+            sx={{
+              textAlign: "end",
+              color: "primary.main",
+              marginBottom: "1rem",
+              zIndex: "1",
+            }}
           >
             Après cette étape, vous ne pourrez plus modifier ces informations.
           </Box>
@@ -323,6 +433,7 @@ const FormAddWine = () => {
             type="submit"
             variant="contained"
             disabled={
+              !selectedName ||
               !selectedColor ||
               !selectedLabel ||
               !selectedType ||
