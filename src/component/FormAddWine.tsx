@@ -17,58 +17,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import ClearInput from "./ClearInput";
-
-// retour d'API
-const GET_ALL_COMBINATIONS = [
-  {
-    label: "Sainte-Foy Côtes de Bordeaux",
-    color: "Rouge",
-    type: "Tranquille",
-    sweetness: "Sec",
-  },
-  {
-    label: "Sainte-Foy Côtes de Bordeaux",
-    color: "Blanc",
-    type: "Tranquille",
-    sweetness: "Sec",
-  },
-  {
-    label: "Sainte-Foy Côtes de Bordeaux",
-    color: "Blanc",
-    type: "Tranquille",
-    sweetness: "Moelleux",
-  },
-  {
-    label: "Sainte-Foy Côtes de Bordeaux",
-    color: "Blanc",
-    type: "Tranquille",
-    sweetness: "Liquoreux",
-  },
-  {
-    label: "Sauternes",
-    color: "Blanc",
-    type: "Tranquille",
-    sweetness: "Liquoreux",
-  },
-  {
-    label: "Bordeaux",
-    color: "Blanc",
-    type: "Tranquille",
-    sweetness: "Sec",
-  },
-  {
-    label: "Bordeaux",
-    color: "Rouge",
-    type: "Tranquille",
-    sweetness: "Sec",
-  },
-  {
-    label: "Bordeaux",
-    color: "Rosé",
-    type: "Tranquille",
-    sweetness: "Sec",
-  },
-];
+import GET_ALL_COMBINATIONS from "./datas";
 
 interface CombinationsProps {
   label: string;
@@ -82,8 +31,10 @@ const useStyles = makeStyles(() => ({
     marginTop: "0.25rem",
   },
 }));
+
 const FormAddWine = () => {
   const styles = useStyles();
+
   const [selectedName, setSelectedName] = useState<string | undefined>(
     undefined
   );
@@ -114,12 +65,13 @@ const FormAddWine = () => {
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-
-    const arr = filteredLabel.map((el) => {
+    const labelsArray = filteredLabel.map((el) => {
       return el.label;
     });
-
-    return Array.from(new Set(arr));
+    const newLabelsArray = Array.from(new Set(labelsArray));
+    if (newLabelsArray.length === 1 && newLabelsArray[0] !== selectedLabel)
+      setSelectedLabel(newLabelsArray[0]);
+    return newLabelsArray;
   }
 
   function combinationsByColor(
@@ -133,11 +85,13 @@ const FormAddWine = () => {
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-    const arr = filteredColor.map((el) => {
+    const colorsArray = filteredColor.map((el) => {
       return el.color;
     });
-
-    return Array.from(new Set(arr));
+    const newColorsArray = Array.from(new Set(colorsArray));
+    if (newColorsArray.length === 1 && newColorsArray[0] !== selectedColor)
+      setSelectedColor(newColorsArray[0]);
+    return newColorsArray;
   }
 
   function combinationsByType(
@@ -151,12 +105,13 @@ const FormAddWine = () => {
         (color === undefined || color === combination.color) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-    const arr = filteredType.map((el) => {
+    const typesArray = filteredType.map((el) => {
       return el.type;
     });
-    const arrayOfCombination = Array.from(new Set(arr));
-
-    return arrayOfCombination;
+    const newTypesArray = Array.from(new Set(typesArray));
+    if (newTypesArray.length === 1 && newTypesArray[0] !== selectedType)
+      setSelectedType(newTypesArray[0]);
+    return newTypesArray;
   }
 
   function combinationsBySweetness(
@@ -170,11 +125,16 @@ const FormAddWine = () => {
         (color === undefined || color === combination.color) &&
         (type === undefined || type === combination.type)
     );
-    const arr = filteredSweetness.map((el) => {
+    const sweetnessesArray = filteredSweetness.map((el) => {
       return el.sweetness;
     });
-
-    return Array.from(new Set(arr));
+    const newSweetnessesArray = Array.from(new Set(sweetnessesArray));
+    if (
+      newSweetnessesArray.length === 1 &&
+      newSweetnessesArray[0] !== selectedSweetness
+    )
+      setSelectedSweetness(newSweetnessesArray[0]);
+    return newSweetnessesArray;
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -235,7 +195,7 @@ const FormAddWine = () => {
                   selectedColor,
                   selectedType,
                   selectedSweetness
-                ).map((value, index) => {
+                ).map((value: string, index: number) => {
                   let key = `${value}-${index}`;
                   return (
                     <MenuItem key={key} value={value}>
