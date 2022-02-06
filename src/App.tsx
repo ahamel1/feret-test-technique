@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
-import "./component/FormAddWine.css";
-import AddWine from "./pages/AddWine";
+import AddWine from "./pages/addWine";
 
 function App() {
   return <AddWine />;

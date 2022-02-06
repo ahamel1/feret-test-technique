@@ -8,12 +8,12 @@ import {
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import React from "react";
-import FormAddWine from "./FormAddWine";
-import backgroundImg from "../img/background-modal.png";
-import logoWine from "../img/logo-wine.png";
+import AddWineForm from "./AddWineForm";
+import backgroundImg from "../../img/background-modal.png";
+import logoWine from "../../img/logo-wine.png";
 import ReplyIcon from "@mui/icons-material/Reply";
 import CloseIcon from "@mui/icons-material/Close";
-interface ModalAddWineProps {
+interface AddWineModalProps {
   show: boolean;
   close: () => void;
 }
@@ -70,9 +70,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: "end",
     width: "100%",
   },
+  replyIcon: {
+    transform: "rotate(180deg)",
+    verticalAlign: "bottom",
+  },
 }));
 
-const ModalAddWine = (props: ModalAddWineProps) => {
+const AddWineModal = (props: AddWineModalProps) => {
   const styles = useStyles();
 
   return (
@@ -106,20 +110,17 @@ const ModalAddWine = (props: ModalAddWineProps) => {
             className={styles.cardContent}
             sx={{ bgcolor: "primary.light", color: "primary.dark" }}
           >
-            <ReplyIcon
-              fontSize="small"
-              sx={{ rotate: "180deg", verticalAlign: "bottom" }}
-            />
+            <ReplyIcon className={styles.replyIcon} fontSize="small" />
             Ajouter un vin vous permet de renseigner d'une manière très générale
             les informations immuables d'un millésime à l'autre. Vous pourrez
             ensuite ajouter ses millésimes avec un niveau de précision beaucoup
             plus élevé.
           </CardContent>
-          <FormAddWine />
+          <AddWineForm />
         </Card>
       </div>
     </Modal>
   );
 };
 
-export default ModalAddWine;
+export default AddWineModal;

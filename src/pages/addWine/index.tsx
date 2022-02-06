@@ -1,14 +1,15 @@
 import { Box, IconButton } from "@mui/material";
 import React, { useState } from "react";
-import ModalCreationWine from "../component/ModalAddWine";
-import iconAddWine from "../img/create-wine.png";
+import AddWineModal from "./AddWineModal";
+import iconAddWine from "../../img/create-wine.png";
+import "./AddWineForm.css";
 
 const AddWine = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <>
       {isOpen && (
-        <ModalCreationWine
+        <AddWineModal
           show={isOpen}
           close={() => {
             setIsOpen(false);

@@ -16,11 +16,11 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
-import ClearInput from "./ClearInput";
+import ClearInput from "../../component/ClearInput";
 import {
   combinations as GET_ALL_COMBINATIONS,
   range as GET_RANGES,
-} from "./datas";
+} from "../../datas/datas";
 
 interface CombinationsProps {
   label: string;
@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const FormAddWine = () => {
+const AddWineForm = () => {
   const styles = useStyles();
 
   const [selectedName, setSelectedName] = useState<string | undefined>(
@@ -68,7 +68,7 @@ const FormAddWine = () => {
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-    const labelsArray = Array.from(
+    const arrayOfLabels = Array.from(
       new Set(
         filteredLabel.map((el) => {
           return el.label;
@@ -76,9 +76,9 @@ const FormAddWine = () => {
       )
     );
 
-    if (labelsArray.length === 1 && labelsArray[0] !== selectedLabel)
-      setSelectedLabel(labelsArray[0]);
-    return labelsArray;
+    if (arrayOfLabels.length === 1 && arrayOfLabels[0] !== selectedLabel)
+      setSelectedLabel(arrayOfLabels[0]);
+    return arrayOfLabels;
   }
 
   function combinationsByColor(
@@ -92,7 +92,7 @@ const FormAddWine = () => {
         (type === undefined || type === combination.type) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-    const colorsArray = Array.from(
+    const arrayOfColors = Array.from(
       new Set(
         filteredColor.map((el) => {
           return el.color;
@@ -100,9 +100,9 @@ const FormAddWine = () => {
       )
     );
 
-    if (colorsArray.length === 1 && colorsArray[0] !== selectedColor)
-      setSelectedColor(colorsArray[0]);
-    return colorsArray;
+    if (arrayOfColors.length === 1 && arrayOfColors[0] !== selectedColor)
+      setSelectedColor(arrayOfColors[0]);
+    return arrayOfColors;
   }
 
   function combinationsByType(
@@ -116,7 +116,7 @@ const FormAddWine = () => {
         (color === undefined || color === combination.color) &&
         (sweetness === undefined || sweetness === combination.sweetness)
     );
-    const typesArray = Array.from(
+    const arrayOfTypes = Array.from(
       new Set(
         filteredType.map((el) => {
           return el.type;
@@ -124,9 +124,9 @@ const FormAddWine = () => {
       )
     );
 
-    if (typesArray.length === 1 && typesArray[0] !== selectedType)
-      setSelectedType(typesArray[0]);
-    return typesArray;
+    if (arrayOfTypes.length === 1 && arrayOfTypes[0] !== selectedType)
+      setSelectedType(arrayOfTypes[0]);
+    return arrayOfTypes;
   }
 
   function combinationsBySweetness(
@@ -140,7 +140,7 @@ const FormAddWine = () => {
         (color === undefined || color === combination.color) &&
         (type === undefined || type === combination.type)
     );
-    const sweetnessesArray = Array.from(
+    const arrayofSweetnesses = Array.from(
       new Set(
         filteredSweetness.map((el) => {
           return el.sweetness;
@@ -149,11 +149,11 @@ const FormAddWine = () => {
     );
 
     if (
-      sweetnessesArray.length === 1 &&
-      sweetnessesArray[0] !== selectedSweetness
+      arrayofSweetnesses.length === 1 &&
+      arrayofSweetnesses[0] !== selectedSweetness
     )
-      setSelectedSweetness(sweetnessesArray[0]);
-    return sweetnessesArray;
+      setSelectedSweetness(arrayofSweetnesses[0]);
+    return arrayofSweetnesses;
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -404,4 +404,4 @@ const FormAddWine = () => {
   );
 };
 
-export default FormAddWine;
+export default AddWineForm;
