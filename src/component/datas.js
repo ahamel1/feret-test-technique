@@ -1,4 +1,4 @@
-const datas = [
+export const combinations = [
   {
     label: "Sainte-Foy Côtes de Bordeaux",
     color: "Rouge",
@@ -49,4 +49,8 @@ const datas = [
   },
 ];
 
-export default datas;
+export const range = [
+  { label: "Premier vin", value: "first-wine" },
+  { label: "Second vin", value: "second-wine" },
+  { label: "Autre vin", value: "ohter-vin" },
+];
